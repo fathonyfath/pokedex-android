@@ -1,6 +1,6 @@
 # pokedex-android
 
-This is sample app that I write for exercising myself to develop apps using Kotlin and various proect.
+This is sample app that I write for exercising myself to develop apps using Kotlin and various project.
 
 ## Dependencies
 The dependecies used for this project is listed below.
