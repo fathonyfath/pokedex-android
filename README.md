@@ -6,7 +6,7 @@ This is sample app that I write for exercising myself to develop apps using Kotl
 The dependecies used for this project is listed below.
 
 * Kotlin
-* Architecture component (ViewModel, Room, LiveData)
+* Architecture component (ViewModel, LiveData)
 * etc
 
 ## License
