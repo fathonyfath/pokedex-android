@@ -6,6 +6,7 @@ import android.os.Bundle
 import dagger.android.AndroidInjection
 import id.fathonyfath.pokedex.App
 import id.fathonyfath.pokedex.di.component.DaggerAppComponent
+import id.fathonyfath.pokedex.di.module.NetModule
 
 /**
  * Created by fathonyfath on 04/02/18.
@@ -14,6 +15,7 @@ fun App.initDaggerComponent() {
     DaggerAppComponent
             .builder()
             .application(this)
+            .netModule(NetModule.instance)
             .build()
             .inject(this)
 

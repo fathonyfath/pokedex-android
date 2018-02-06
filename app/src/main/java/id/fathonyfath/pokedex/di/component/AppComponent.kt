@@ -7,6 +7,7 @@ import dagger.android.AndroidInjectionModule
 import id.fathonyfath.pokedex.App
 import id.fathonyfath.pokedex.di.ActivityBuilder
 import id.fathonyfath.pokedex.di.module.AppModule
+import id.fathonyfath.pokedex.di.module.NetModule
 import javax.inject.Singleton
 
 /**
@@ -16,6 +17,7 @@ import javax.inject.Singleton
 @Component(modules = [
     AndroidInjectionModule::class,
     AppModule::class,
+    NetModule::class,
     ActivityBuilder::class
 ])
 interface AppComponent {
@@ -24,7 +26,7 @@ interface AppComponent {
     interface Builder {
         @BindsInstance
         fun application(application: Application): Builder
-
+        fun netModule(netModule: NetModule): Builder
         fun build(): AppComponent
     }
 

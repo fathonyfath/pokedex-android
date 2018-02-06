@@ -1,11 +1,11 @@
 package id.fathonyfath.pokedex.di.module
 
-import android.content.Context
 import dagger.Module
 import dagger.Provides
 import id.fathonyfath.pokedex.data.PokemonRepositoryImpl
+import id.fathonyfath.pokedex.data.api.PokeAPI
 import id.fathonyfath.pokedex.data.repository.PokemonRepository
-import javax.inject.Singleton
+import id.fathonyfath.pokedex.utils.PokemonImageUrlGenerator
 
 /**
  * Created by fathonyfath on 04/02/18.
@@ -15,7 +15,7 @@ import javax.inject.Singleton
 open class MainActivityModule {
 
     @Provides
-    fun providePokemonRepository(context: Context): PokemonRepository =
-            PokemonRepositoryImpl(context)
+    fun providePokemonRepository(pokeAPI: PokeAPI, pokemonImageUrlGenerator: PokemonImageUrlGenerator): PokemonRepository =
+            PokemonRepositoryImpl(pokeAPI, pokemonImageUrlGenerator)
 
 }
