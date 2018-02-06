@@ -15,7 +15,7 @@ import javax.inject.Singleton
 open class MainActivityModule {
 
     @Provides
-    fun providePokemonRepository(context: Context) : PokemonRepository =
+    fun providePokemonRepository(context: Context): PokemonRepository =
             PokemonRepositoryImpl(context)
 
 }

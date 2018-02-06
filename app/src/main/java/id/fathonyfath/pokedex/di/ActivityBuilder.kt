@@ -12,6 +12,6 @@ import id.fathonyfath.pokedex.di.module.MainActivityModule
 interface ActivityBuilder {
 
     @ContributesAndroidInjector(modules = [MainActivityModule::class])
-    fun bindMainActivity() : MainActivity
+    fun bindMainActivity(): MainActivity
 
 }

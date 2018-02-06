@@ -11,16 +11,16 @@ class ViewModelFactory @Inject constructor(
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         var creator = creators.get(modelClass)
-        if(creator == null) {
+        if (creator == null) {
             for ((key, value) in creators) {
-                if(modelClass.isAssignableFrom(key)) {
+                if (modelClass.isAssignableFrom(key)) {
                     creator = value
                     break
                 }
             }
         }
 
-        if(creator == null) {
+        if (creator == null) {
             throw IllegalArgumentException("Unknown model data class " + modelClass)
         }
 

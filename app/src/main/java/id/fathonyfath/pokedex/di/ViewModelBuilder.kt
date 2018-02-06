@@ -15,9 +15,11 @@ import id.fathonyfath.pokedex.MainViewModel
 interface ViewModelBuilder {
 
     @Binds
-    fun bindViewModelFactory(viewModelFactory: ViewModelFactory) : ViewModelProvider.Factory
+    fun bindViewModelFactory(viewModelFactory: ViewModelFactory): ViewModelProvider.Factory
 
-    @Binds @IntoMap @ViewModelKey(MainViewModel::class)
-    fun bindPokemonRepository(mainViewModel: MainViewModel) : ViewModel
+    @Binds
+    @IntoMap
+    @ViewModelKey(MainViewModel::class)
+    fun bindPokemonRepository(mainViewModel: MainViewModel): ViewModel
 
 }
