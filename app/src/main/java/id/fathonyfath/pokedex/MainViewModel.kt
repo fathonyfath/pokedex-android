@@ -17,23 +17,19 @@ class MainViewModel @Inject constructor(
         private val pokemonRepository: PokemonRepository
 ) : ViewModel() {
 
-    private val mutablePokemonList: MutableLiveData<List<Pokemon>> = MutableLiveData()
+    private val _pokemonList: MutableLiveData<List<Pokemon>> = MutableLiveData()
+    private val _hasMorePokemon: MutableLiveData<Boolean> = MutableLiveData()
+
     private var currentOffset: Int = 0
 
     val pokemonList: LiveData<List<Pokemon>>
-        get() = mutablePokemonList
+        get() = _pokemonList
+
+    val hasMorePokemon: LiveData<Boolean>
+        get() = _hasMorePokemon
 
     init {
-        pokemonRepository.getPokemonList(currentOffset)
-                .subscribe({ pokemonList ->
-                    run {
-                        if (pokemonList.isNotEmpty()) {
-                            mergePokemonListToLiveData(pokemonList)
-                            currentOffset += 20
-                        }
-
-                    }
-                })
+        _hasMorePokemon.postValue(true)
     }
 
     fun triggerLoadMore() {
@@ -45,17 +41,18 @@ class MainViewModel @Inject constructor(
                             currentOffset += 20
                         }
 
+                        _hasMorePokemon.postValue(pokemonList.isNotEmpty())
                     }
                 })
     }
 
     private fun mergePokemonListToLiveData(pokemonList: List<Pokemon>) {
-        val oldMutable = mutablePokemonList.value?.toMutableList()
+        val oldMutable = _pokemonList.value?.toMutableList()
         if (oldMutable == null) {
-            mutablePokemonList.postValue(pokemonList)
+            _pokemonList.postValue(pokemonList)
         } else {
             oldMutable.addAll(pokemonList)
-            mutablePokemonList.postValue(oldMutable)
+            _pokemonList.postValue(oldMutable)
         }
     }
 }
