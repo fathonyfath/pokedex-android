@@ -3,10 +3,10 @@ package id.fathonyfath.pokedex
 import android.arch.lifecycle.ViewModelProviders
 import android.content.res.Configuration
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.widget.Toast
+import android.util.Log
 import id.fathonyfath.pokedex.adapter.PokemonAdapter
 import id.fathonyfath.pokedex.di.ViewModelFactory
 import id.fathonyfath.pokedex.model.Pokemon
@@ -43,6 +43,10 @@ class MainActivity : AppCompatActivity() {
                 pokemonAdapter?.hasNextItem = it
             }
         }
+
+        viewModel.selectedPokemonDetail.observe(this) {
+            Log.d("MainActivity", it.toString())
+        }
     }
 
     fun initializeRecyclerView() {
@@ -50,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 
         pokemonRecycler.layoutManager = GridLayoutManager(this, spanCount)
         pokemonAdapter = PokemonAdapter(listOf(), true) {
-
+            viewModel.getPokemonDetail(it)
         }
 
         pokemonAdapter?.onLoadMore = {

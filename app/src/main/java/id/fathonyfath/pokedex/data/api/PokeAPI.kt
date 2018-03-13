@@ -1,5 +1,6 @@
 package id.fathonyfath.pokedex.data.api
 
+import id.fathonyfath.pokedex.data.api.response.PokemonDetail
 import id.fathonyfath.pokedex.data.api.response.PokemonList
 import io.reactivex.Single
 import retrofit2.http.GET
@@ -15,6 +16,6 @@ interface PokeAPI {
     fun getPokemonList(@Query("offset") offset: Int): Single<PokemonList>
 
     @GET("api/v2/pokemon/{pokemonId}")
-    fun getPokemonDetail(@Path("pokemonId") pokemonId: Int): Single<Any>
+    fun getPokemonDetail(@Path("pokemonId") pokemonId: Int): Single<PokemonDetail>
 
 }

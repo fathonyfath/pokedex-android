@@ -1,5 +1,6 @@
 package id.fathonyfath.pokedex.data.repository
 
+import id.fathonyfath.pokedex.model.Detail
 import id.fathonyfath.pokedex.model.Pokemon
 import io.reactivex.Single
 
@@ -9,6 +10,6 @@ import io.reactivex.Single
 interface PokemonRepository {
 
     fun getPokemonList(offset: Int): Single<List<Pokemon>>
-    fun getPokemonDetail(pokemonId: Int): Single<Pokemon>
+    fun getPokemonDetail(pokemonId: Int): Single<Detail>
 
 }

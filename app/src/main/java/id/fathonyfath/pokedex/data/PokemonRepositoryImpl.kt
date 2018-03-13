@@ -2,13 +2,14 @@ package id.fathonyfath.pokedex.data
 
 import id.fathonyfath.pokedex.data.api.PokeAPI
 import id.fathonyfath.pokedex.data.repository.PokemonRepository
+import id.fathonyfath.pokedex.model.Detail
 import id.fathonyfath.pokedex.model.Pokemon
+import id.fathonyfath.pokedex.model.Profile
 import id.fathonyfath.pokedex.utils.PokemonImageUrlGenerator
 import id.fathonyfath.pokedex.utils.capitalizeFirstLetter
 import id.fathonyfath.pokedex.utils.getIdFromURI
 import id.fathonyfath.pokedex.utils.removeDash
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 /**
@@ -38,7 +39,22 @@ class PokemonRepositoryImpl(
                 .observeOn(Schedulers.io())
     }
 
-    override fun getPokemonDetail(pokemonId: Int): Single<Pokemon> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getPokemonDetail(pokemonId: Int): Single<Detail> {
+        return pokeAPI.getPokemonDetail(pokemonId)
+                .map {
+                    val abilities = it.abilities.map { it.abilityDetail.name }.map { capitalizeFirstLetter(removeDash(it)) }
+                    val types = it.types.map { it.typeDetail.name }.map { capitalizeFirstLetter(removeDash(it)) }
+
+                    val stats = mutableMapOf<String, Int>()
+
+                    it.stats.forEach {
+                        stats[capitalizeFirstLetter(removeDash(it.statDetail.name))] = it.baseStat
+                    }
+
+                    return@map Detail(types, abilities,
+                            Profile(it.weight, it.height, it.baseExperience), stats)
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
     }
 }
