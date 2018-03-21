@@ -3,11 +3,18 @@ package id.fathonyfath.pokedex
 import android.arch.lifecycle.ViewModelProviders
 import android.content.res.Configuration
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
+import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.util.Log
+import android.widget.Toast
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.HasSupportFragmentInjector
 import id.fathonyfath.pokedex.adapter.PokemonAdapter
+import id.fathonyfath.pokedex.di.Injectable
 import id.fathonyfath.pokedex.di.ViewModelFactory
 import id.fathonyfath.pokedex.model.Pokemon
 import id.fathonyfath.pokedex.utils.GridSpacingItemDecoration
@@ -15,7 +22,13 @@ import id.fathonyfath.pokedex.utils.observe
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, Injectable {
+
+
+    @Inject
+    lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
+
+    override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentDispatchingAndroidInjector
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -25,6 +38,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     var pokemonAdapter: PokemonAdapter? = null
+
+    companion object {
+        val DIALOG_TAG = "Detail"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,8 +62,23 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewModel.selectedPokemonDetail.observe(this) {
-            Log.d("MainActivity", it.toString())
+            if (it != null) {
+                if (getDetailDialog() == null) showDetailDialog()
+            } else {
+                getDetailDialog()?.dismissAllowingStateLoss()
+            }
         }
+
+        Log.d("MainActivity", "VM id: ${viewModel}")
+    }
+
+    fun showDetailDialog() {
+        val detailDialog = DetailDialog()
+        detailDialog.show(supportFragmentManager, DIALOG_TAG)
+    }
+
+    fun getDetailDialog(): DetailDialog? {
+        return supportFragmentManager.findFragmentByTag(DIALOG_TAG) as DetailDialog?
     }
 
     fun initializeRecyclerView() {
@@ -72,4 +104,5 @@ class MainActivity : AppCompatActivity() {
             it.notifyDataSetChanged()
         }
     }
+
 }

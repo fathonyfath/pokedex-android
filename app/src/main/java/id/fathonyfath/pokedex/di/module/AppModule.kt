@@ -21,8 +21,6 @@ import javax.inject.Singleton
 ])
 open class AppModule {
 
-
-
     @Provides
     @Singleton
     fun provideContext(application: Application): Context = application

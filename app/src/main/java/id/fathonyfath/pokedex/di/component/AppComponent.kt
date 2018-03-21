@@ -6,6 +6,7 @@ import dagger.Component
 import dagger.android.AndroidInjectionModule
 import id.fathonyfath.pokedex.App
 import id.fathonyfath.pokedex.di.ActivityBuilder
+import id.fathonyfath.pokedex.di.FragmentBuilder
 import id.fathonyfath.pokedex.di.module.AppModule
 import id.fathonyfath.pokedex.di.module.NetModule
 import javax.inject.Singleton
@@ -18,7 +19,8 @@ import javax.inject.Singleton
     AndroidInjectionModule::class,
     AppModule::class,
     NetModule::class,
-    ActivityBuilder::class
+    ActivityBuilder::class,
+    FragmentBuilder::class
 ])
 interface AppComponent {
 
