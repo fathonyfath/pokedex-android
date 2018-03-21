@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel
 import id.fathonyfath.pokedex.data.repository.PokemonRepository
 import id.fathonyfath.pokedex.model.Detail
 import id.fathonyfath.pokedex.model.Pokemon
+import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 /**
@@ -73,7 +74,6 @@ class MainViewModel @Inject constructor(
             _pokemonList.postValue(pokemonMap.values.toList())
             _selectedPokemonDetail.postValue(it)
         }
-
     }
 
     fun clearPokemonDetail() {

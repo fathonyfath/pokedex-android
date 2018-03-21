@@ -68,8 +68,6 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, Injectable
                 getDetailDialog()?.dismissAllowingStateLoss()
             }
         }
-
-        Log.d("MainActivity", "VM id: ${viewModel}")
     }
 
     fun showDetailDialog() {

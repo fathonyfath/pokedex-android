@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Pokédex</string>
+
+    <string name="pokemonTypes">Types</string>
+    <string name="pokemonProfile">Profile</string>
+    <string name="pokemonWeight">Weight</string>
+    <string name="pokemonHeight">Height</string>
+    <string name="pokemonBaseExperience">Base experience</string>
+    <string name="pokemonAbilities">Abilities</string>
+    <string name="pokemonStats">Stats</string>
 </resources>

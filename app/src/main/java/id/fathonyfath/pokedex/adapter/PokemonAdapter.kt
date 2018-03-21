@@ -2,16 +2,14 @@ package id.fathonyfath.pokedex.adapter
 
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import id.fathonyfath.pokedex.R
 import id.fathonyfath.pokedex.model.Pokemon
+import id.fathonyfath.pokedex.module.GlideApp
 import kotlinx.android.synthetic.main.item_pokemon.view.*
-import id.fathonyfath.pokedex.module.*
 
 /**
  * Created by fathonyfath on 17/11/17.
