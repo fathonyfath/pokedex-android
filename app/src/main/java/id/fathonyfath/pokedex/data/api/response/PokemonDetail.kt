@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName
  * Created by fathonyfath on 13/03/18.
  */
 data class PokemonDetail(
+        @SerializedName("name") var name: String,
         @SerializedName("weight") var weight: Int,
         @SerializedName("height") var height: Int,
         @SerializedName("base_experience") var baseExperience: Int,

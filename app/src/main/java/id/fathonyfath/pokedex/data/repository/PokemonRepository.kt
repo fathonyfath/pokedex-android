@@ -10,6 +10,6 @@ import io.reactivex.Single
 interface PokemonRepository {
 
     fun getPokemonList(offset: Int): Single<List<Pokemon>>
-    fun getPokemonDetail(pokemonId: Int): Single<Detail>
+    fun getPokemonDetail(pokemonId: Int): Single<Pair<Int, Detail>>
 
 }

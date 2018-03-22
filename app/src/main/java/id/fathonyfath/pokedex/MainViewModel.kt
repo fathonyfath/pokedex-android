@@ -17,20 +17,21 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _pokemonList: MutableLiveData<List<Pokemon>> = MutableLiveData()
+    private val _pokemonMap: MutableLiveData<Map<Int, Pokemon>> = MutableLiveData()
     private val _hasMorePokemon: MutableLiveData<Boolean> = MutableLiveData()
-    private val _selectedPokemonDetail: MutableLiveData<Pokemon?> = MutableLiveData()
 
     private var currentOffset: Int = 0
-    private var pokemonMap: MutableMap<Int, Pokemon> = mutableMapOf()
+    private var pokemonMapInternal: MutableMap<Int, Pokemon> = mutableMapOf()
+    private var networkRequestQueue = mutableSetOf<Int>()
 
     val pokemonList: LiveData<List<Pokemon>>
         get() = _pokemonList
 
+    val pokemonMap: LiveData<Map<Int, Pokemon>>
+        get() = _pokemonMap
+
     val hasMorePokemon: LiveData<Boolean>
         get() = _hasMorePokemon
-
-    val selectedPokemonDetail: LiveData<Pokemon?>
-        get() = _selectedPokemonDetail
 
     init {
         _hasMorePokemon.postValue(true)
@@ -55,44 +56,32 @@ class MainViewModel @Inject constructor(
     }
 
     fun getPokemonDetail(pokemon: Pokemon) {
-        _selectedPokemonDetail.postValue(pokemon)
-
-        if(pokemon.detail == null) fetchPokemonDetail(pokemon)
+        fetchPokemonDetail(pokemon)
     }
 
     private fun fetchPokemonDetail(pokemon: Pokemon) {
-        pokemonRepository.getPokemonDetail(pokemon.id)
-                .subscribe(::onNextPokemonDetail, ::onError)
-    }
+        if (!networkRequestQueue.contains(pokemon.id)) {
+            pokemonRepository.getPokemonDetail(pokemon.id)
+                    .subscribe(::onNextPokemonDetail, ::onError)
 
-    private fun onNextPokemonDetail(detail: Detail?) {
-        val oldSelectedPokemon = _selectedPokemonDetail.value
-        oldSelectedPokemon?.let {
-            it.detail = detail
-            pokemonMap[it.id] = it
-
-            _pokemonList.postValue(pokemonMap.values.toList())
-            _selectedPokemonDetail.postValue(it)
+            networkRequestQueue.add(pokemon.id)
         }
     }
 
-    fun clearPokemonDetail() {
-        _selectedPokemonDetail.postValue(null)
-    }
+    private fun onNextPokemonDetail(detailWithId: Pair<Int, Detail>) {
+        val (id, detail) = detailWithId
+        pokemonMapInternal[id]?.detail = detail
 
-    private fun mergePokemonListToLiveData(pokemonList: List<Pokemon>) {
-        val oldMutable = _pokemonList.value?.toMutableList()
-        if (oldMutable == null) {
-            _pokemonList.postValue(pokemonList)
-        } else {
-            oldMutable.addAll(pokemonList)
-            _pokemonList.postValue(oldMutable)
-        }
+        _pokemonList.postValue(pokemonMapInternal.values.toList())
+        _pokemonMap.postValue(pokemonMapInternal)
+
+        networkRequestQueue.remove(id)
     }
 
     private fun mergePokemonListToPokemonMapAndUpdateLiveData(pokemonList: List<Pokemon>) {
-        pokemonList.forEach { pokemonMap[it.id] = it }
+        pokemonList.forEach { pokemonMapInternal[it.id] = it }
 
-        _pokemonList.postValue(pokemonMap.values.toList())
+        _pokemonList.postValue(pokemonMapInternal.values.toList())
+        _pokemonMap.postValue(pokemonMapInternal)
     }
 }

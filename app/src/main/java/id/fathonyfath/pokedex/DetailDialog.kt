@@ -1,7 +1,6 @@
 package id.fathonyfath.pokedex
 
 import android.arch.lifecycle.ViewModelProviders
-import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
@@ -11,21 +10,37 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withC
 import id.fathonyfath.pokedex.di.Injectable
 import id.fathonyfath.pokedex.di.ViewModelFactory
 import id.fathonyfath.pokedex.model.Detail
+import id.fathonyfath.pokedex.module.GlideApp
 import id.fathonyfath.pokedex.utils.observe
 import kotlinx.android.synthetic.main.dialog_detail.*
 import javax.inject.Inject
-import id.fathonyfath.pokedex.module.GlideApp
 
 /**
  * Created by fathonyfath on 17/03/18.
  */
 class DetailDialog : DialogFragment(), Injectable {
 
+    companion object {
+        private val POKEMON_ID_KEY = "PokemonId"
+
+        fun newInstance(pokemonId: Int): DetailDialog {
+            val args = Bundle().apply {
+                putInt(POKEMON_ID_KEY, pokemonId)
+            }
+
+            return DetailDialog().apply { arguments = args }
+        }
+    }
+
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
     val viewModel: MainViewModel by lazy {
         ViewModelProviders.of(activity, viewModelFactory).get(MainViewModel::class.java)
+    }
+
+    val pokemonId: Int by lazy {
+        arguments.getInt(POKEMON_ID_KEY, -1)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +64,6 @@ class DetailDialog : DialogFragment(), Injectable {
             window?.setLayout(width, height)
         }
 
-
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -60,15 +74,22 @@ class DetailDialog : DialogFragment(), Injectable {
         super.onViewCreated(view, savedInstanceState)
 
         toolbar.setNavigationOnClickListener {
-            viewModel.clearPokemonDetail()
+            dialog.dismiss()
         }
 
-        viewModel.selectedPokemonDetail.observe(this) {
+        viewModel.pokemonMap.observe(this) {
             it?.let {
-                toolbar.title = "#${it.id} - ${it.name}"
-                GlideApp.with(this).load(it.imageUrl).transition(withCrossFade()).into(pokemonImage)
+                val pokemon = it[pokemonId]
 
-                decideDetailOrLoading(it.detail)
+                pokemon?.let {
+                    if (it.detail == null)
+                        viewModel.getPokemonDetail(it)
+                }
+
+                toolbar.title = "#${pokemon?.id} - ${pokemon?.name}"
+                GlideApp.with(this).load(pokemon?.imageUrl).transition(withCrossFade()).into(pokemonImage)
+
+                decideDetailOrLoading(pokemon?.detail)
             }
         }
     }
@@ -108,10 +129,5 @@ class DetailDialog : DialogFragment(), Injectable {
     private fun showLoading() {
         detailLoading.visibility = View.VISIBLE
         pokemonDetail.visibility = View.GONE
-    }
-
-    override fun onCancel(dialog: DialogInterface?) {
-        super.onCancel(dialog)
-        viewModel.clearPokemonDetail()
     }
 }

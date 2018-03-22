@@ -39,7 +39,7 @@ class PokemonRepositoryImpl(
                 .observeOn(Schedulers.io())
     }
 
-    override fun getPokemonDetail(pokemonId: Int): Single<Detail> {
+    override fun getPokemonDetail(pokemonId: Int): Single<Pair<Int, Detail>> {
         return pokeAPI.getPokemonDetail(pokemonId)
                 .map {
                     val abilities = it.abilities.map { it.abilityDetail.name }.map { capitalizeFirstLetter(removeDash(it)) }
@@ -51,8 +51,10 @@ class PokemonRepositoryImpl(
                         stats[capitalizeFirstLetter(removeDash(it.statDetail.name))] = it.baseStat
                     }
 
-                    return@map Detail(types, abilities,
+                    val detail = Detail(types, abilities,
                             Profile(it.weight, it.height, it.baseExperience), stats)
+
+                    return@map Pair(pokemonId, detail)
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())

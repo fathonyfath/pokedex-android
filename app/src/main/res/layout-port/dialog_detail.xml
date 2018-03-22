@@ -25,7 +25,7 @@
             android:id="@+id/pokemonImage"
             android:layout_width="128dp"
             android:layout_height="128dp"
-            android:layout_gravity="center"
+            android:layout_gravity="center_horizontal"
             android:layout_margin="8dp" />
 
         <FrameLayout

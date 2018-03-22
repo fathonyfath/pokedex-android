@@ -60,23 +60,11 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, Injectable
                 pokemonAdapter?.hasNextItem = it
             }
         }
-
-        viewModel.selectedPokemonDetail.observe(this) {
-            if (it != null) {
-                if (getDetailDialog() == null) showDetailDialog()
-            } else {
-                getDetailDialog()?.dismissAllowingStateLoss()
-            }
-        }
     }
 
-    fun showDetailDialog() {
-        val detailDialog = DetailDialog()
+    fun showDetailDialog(pokemonId: Int) {
+        val detailDialog = DetailDialog.newInstance(pokemonId)
         detailDialog.show(supportFragmentManager, DIALOG_TAG)
-    }
-
-    fun getDetailDialog(): DetailDialog? {
-        return supportFragmentManager.findFragmentByTag(DIALOG_TAG) as DetailDialog?
     }
 
     fun initializeRecyclerView() {
@@ -84,7 +72,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, Injectable
 
         pokemonRecycler.layoutManager = GridLayoutManager(this, spanCount)
         pokemonAdapter = PokemonAdapter(listOf(), true) {
-            viewModel.getPokemonDetail(it)
+            showDetailDialog(it.id)
         }
 
         pokemonAdapter?.onLoadMore = {
