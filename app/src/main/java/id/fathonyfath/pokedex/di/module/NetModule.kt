@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import id.fathonyfath.pokedex.data.api.PokeAPI
-import id.fathonyfath.pokedex.utils.PokemonImageUrlGenerator
+import id.fathonyfath.pokedex.utils.PokemonDataHelper
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -78,7 +78,7 @@ open class NetModule(private val baseUrl: String, private val baseImageUrl: Stri
 
     @Provides
     @Singleton
-    fun providePokemonImageUrlGenerator(): PokemonImageUrlGenerator {
-        return PokemonImageUrlGenerator(baseImageUrl)
+    fun providePokemonImageUrlGenerator(): PokemonDataHelper {
+        return PokemonDataHelper(baseImageUrl)
     }
 }

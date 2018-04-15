@@ -5,10 +5,7 @@ import id.fathonyfath.pokedex.data.repository.PokemonRepository
 import id.fathonyfath.pokedex.model.Detail
 import id.fathonyfath.pokedex.model.Pokemon
 import id.fathonyfath.pokedex.model.Profile
-import id.fathonyfath.pokedex.utils.PokemonImageUrlGenerator
-import id.fathonyfath.pokedex.utils.capitalizeFirstLetter
-import id.fathonyfath.pokedex.utils.getIdFromURI
-import id.fathonyfath.pokedex.utils.removeDash
+import id.fathonyfath.pokedex.utils.PokemonDataHelper
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 
@@ -18,7 +15,7 @@ import io.reactivex.schedulers.Schedulers
 
 class PokemonRepositoryImpl(
         private val pokeAPI: PokeAPI,
-        private val pokemonImageUrlGenerator: PokemonImageUrlGenerator)
+        private val pokemonDataHelper: PokemonDataHelper)
     : PokemonRepository {
 
     override fun getPokemonList(offset: Int): Single<List<Pokemon>> {
@@ -26,11 +23,13 @@ class PokemonRepositoryImpl(
                 .map {
                     val pokemonList = arrayListOf<Pokemon>()
                     for (pokemon in it.results) {
-                        val pokemonId = getIdFromURI(pokemon.url)
+                        val pokemonId = pokemonDataHelper.getIdFromURI(pokemon.url)
                         pokemonId?.let {
                             pokemonList.add(Pokemon(it,
-                                    capitalizeFirstLetter(removeDash(pokemon.name)),
-                                    pokemonImageUrlGenerator.getImageUrl(it)))
+                                    pokemonDataHelper.capitalizeFirstLetter(
+                                            pokemonDataHelper.removeDash(pokemon.name)
+                                    ),
+                                    pokemonDataHelper.getImageUrl(it)))
                         }
                     }
                     return@map pokemonList.toList()
@@ -42,13 +41,19 @@ class PokemonRepositoryImpl(
     override fun getPokemonDetail(pokemonId: Int): Single<Pair<Int, Detail>> {
         return pokeAPI.getPokemonDetail(pokemonId)
                 .map {
-                    val abilities = it.abilities.map { it.abilityDetail.name }.map { capitalizeFirstLetter(removeDash(it)) }
-                    val types = it.types.map { it.typeDetail.name }.map { capitalizeFirstLetter(removeDash(it)) }
+                    val abilities = it.abilities.map { it.abilityDetail.name }.map {
+                        pokemonDataHelper.capitalizeFirstLetter(pokemonDataHelper.removeDash(it))
+                    }
+                    val types = it.types.map { it.typeDetail.name }.map {
+                        pokemonDataHelper.capitalizeFirstLetter(pokemonDataHelper.removeDash(it))
+                    }
 
                     val stats = mutableMapOf<String, Int>()
 
                     it.stats.forEach {
-                        stats[capitalizeFirstLetter(removeDash(it.statDetail.name))] = it.baseStat
+                        stats[pokemonDataHelper.capitalizeFirstLetter(
+                                pokemonDataHelper.removeDash(it.statDetail.name)
+                        )] = it.baseStat
                     }
 
                     val detail = Detail(types, abilities,
