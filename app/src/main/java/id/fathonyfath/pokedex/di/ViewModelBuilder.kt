@@ -20,6 +20,6 @@ interface ViewModelBuilder {
     @Binds
     @IntoMap
     @ViewModelKey(MainViewModel::class)
-    fun bindPokemonRepository(mainViewModel: MainViewModel): ViewModel
+    fun bindMainViewModel(mainViewModel: MainViewModel): ViewModel
 
 }

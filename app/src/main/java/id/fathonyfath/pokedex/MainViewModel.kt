@@ -13,7 +13,7 @@ import javax.inject.Inject
  * Created by fathonyfath on 04/02/18.
  */
 class MainViewModel @Inject constructor(
-        private val pokemonRepository: PokemonRepository
+        val pokemonRepository: PokemonRepository
 ) : ViewModel() {
 
     private val _pokemonList: MutableLiveData<List<Pokemon>> = MutableLiveData()

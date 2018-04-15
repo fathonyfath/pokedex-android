@@ -7,8 +7,10 @@ import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import id.fathonyfath.pokedex.data.PokemonRepositoryImpl
+import id.fathonyfath.pokedex.data.api.PokeAPI
 import id.fathonyfath.pokedex.data.repository.PokemonRepository
 import id.fathonyfath.pokedex.di.ViewModelBuilder
+import id.fathonyfath.pokedex.utils.PokemonDataHelper
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -22,7 +24,10 @@ import javax.inject.Singleton
 open class AppModule {
 
     @Provides
-    @Singleton
     fun provideContext(application: Application): Context = application
+
+    @Provides
+    fun providePokemonRepository(pokeAPI: PokeAPI, pokemonDataHelper: PokemonDataHelper): PokemonRepository =
+            PokemonRepositoryImpl(pokeAPI, pokemonDataHelper)
 
 }
