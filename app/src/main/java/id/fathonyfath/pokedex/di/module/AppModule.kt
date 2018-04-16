@@ -24,9 +24,11 @@ import javax.inject.Singleton
 open class AppModule {
 
     @Provides
+    @Singleton
     fun provideContext(application: Application): Context = application
 
     @Provides
+    @Singleton
     fun providePokemonRepository(pokeAPI: PokeAPI, pokemonDataHelper: PokemonDataHelper): PokemonRepository =
             PokemonRepositoryImpl(pokeAPI, pokemonDataHelper)
 

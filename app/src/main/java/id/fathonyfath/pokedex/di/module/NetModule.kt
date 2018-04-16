@@ -53,8 +53,7 @@ open class NetModule(private val baseUrl: String, private val baseImageUrl: Stri
 
     @Provides
     @Singleton
-    fun provideGsonCoverterFactory(gson: Gson): GsonConverterFactory
-            = GsonConverterFactory.create(gson)
+    fun provideGsonCoverterFactory(gson: Gson): GsonConverterFactory = GsonConverterFactory.create(gson)
 
 
     @Provides
