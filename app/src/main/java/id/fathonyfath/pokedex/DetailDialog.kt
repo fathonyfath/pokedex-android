@@ -3,7 +3,6 @@ package id.fathonyfath.pokedex
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -78,19 +77,12 @@ class DetailDialog : DialogFragment(), Injectable {
             dialog.dismiss()
         }
 
-        viewModel.pokemonMap.observe(this) {
+        viewModel.fetchPokemonDetails(pokemonId)
+        viewModel.observePokemonWithId(pokemonId).observe(this) {
             it?.let {
-                val pokemon = it[pokemonId]
-
-                pokemon?.let {
-                    if (it.detail == null)
-                        viewModel.getPokemonDetail(it)
-                }
-
-                toolbar.title = "#${pokemon?.id} - ${pokemon?.name}"
-                GlideApp.with(this).load(pokemon?.imageUrl).transition(withCrossFade()).into(pokemonImage)
-
-                decideDetailOrLoading(pokemon?.detail)
+                toolbar.title = "#${it.id} - ${it.name}"
+                GlideApp.with(this).load(it.imageUrl).transition(withCrossFade()).into(pokemonImage)
+                decideDetailOrLoading(it.detail)
             }
         }
     }

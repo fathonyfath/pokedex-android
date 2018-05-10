@@ -2,6 +2,8 @@ package id.fathonyfath.pokedex.data.repository
 
 import id.fathonyfath.pokedex.model.Detail
 import id.fathonyfath.pokedex.model.Pokemon
+import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.Single
 
 /**
@@ -9,7 +11,9 @@ import io.reactivex.Single
  */
 interface PokemonRepository {
 
-    fun getPokemonList(offset: Int): Single<List<Pokemon>>
-    fun getPokemonDetail(pokemonId: Int): Single<Pair<Int, Detail>>
+    fun listenToPokemonList(): Observable<List<Pokemon>>
+    fun listenToPokemonId(pokemonId: Int): Observable<Pokemon>
+    fun fetchPokemonDetail(pokemonId: Int): Completable
+    fun fetchMorePokemon(offsetPokemonId: Int): Single<Boolean>
 
 }

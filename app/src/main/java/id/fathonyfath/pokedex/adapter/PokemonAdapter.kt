@@ -21,22 +21,26 @@ class PokemonAdapter(var pokemonList: List<Pokemon>,
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
-        val TYPE_ITEM = 0
-        val TYPE_LOADING = 1
+        const val TYPE_ITEM = 0
+        const val TYPE_LOADING = 1
     }
 
     var hasNextItem: Boolean = hasNextItem
         set(value) {
-            if(field != value) {
+            if (field != value) {
                 field = value
                 updateLoadingRecycler()
             }
         }
 
-    var onLoadMore: (() -> Unit)? = null
+    var onLoadMore: ((Int) -> Unit)? = null
 
     private fun updateLoadingRecycler() {
-        if (hasNextItem) notifyItemInserted(pokemonList.size) else notifyItemRemoved(pokemonList.size)
+        if (hasNextItem) {
+            notifyItemInserted(pokemonList.size)
+        } else {
+            notifyItemRemoved(pokemonList.size)
+        }
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -61,11 +65,15 @@ class PokemonAdapter(var pokemonList: List<Pokemon>,
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is ItemViewHolder -> holder.bind(pokemonList[position])
-            else -> onLoadMore?.invoke()
+            else -> onLoadMore?.invoke(pokemonList.size)
         }
     }
 
-    override fun getItemCount(): Int = if (this.hasNextItem) pokemonList.size + 1 else pokemonList.size
+    override fun getItemCount(): Int = if (this.hasNextItem) {
+        pokemonList.size + 1
+    } else {
+        pokemonList.size
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent?.context)

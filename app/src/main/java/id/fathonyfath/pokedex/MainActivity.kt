@@ -62,12 +62,12 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, Injectable
         }
     }
 
-    fun showDetailDialog(pokemonId: Int) {
+    private fun showDetailDialog(pokemonId: Int) {
         val detailDialog = DetailDialog.newInstance(pokemonId)
         detailDialog.show(supportFragmentManager, DIALOG_TAG)
     }
 
-    fun initializeRecyclerView() {
+    private fun initializeRecyclerView() {
         val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 4 else 2
 
         pokemonRecycler.layoutManager = GridLayoutManager(this, spanCount)
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, Injectable
         }
 
         pokemonAdapter?.onLoadMore = {
-            viewModel.triggerLoadMore()
+            viewModel.triggerLoadMore(it)
         }
 
         pokemonRecycler.adapter = pokemonAdapter
@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, Injectable
         pokemonRecycler.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingInPixel, true, 0))
     }
 
-    fun updateAdapterList(pokemonList: List<Pokemon>) {
+    private fun updateAdapterList(pokemonList: List<Pokemon>) {
         pokemonAdapter?.let {
             it.pokemonList = pokemonList
             it.notifyDataSetChanged()
