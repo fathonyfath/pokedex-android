@@ -9,7 +9,7 @@ import id.fathonyfath.pokedex.data.api.PokeAPI
 import id.fathonyfath.pokedex.data.repository.PokemonRepository
 import id.fathonyfath.pokedex.data.storage.InMemoryStorage
 import id.fathonyfath.pokedex.di.ViewModelBuilder
-import id.fathonyfath.pokedex.utils.PokemonDataHelper
+import id.fathonyfath.pokedex.utils.PokemonImageGenerator
 import javax.inject.Singleton
 
 /**
@@ -32,7 +32,7 @@ open class AppModule {
     @Singleton
     fun providePokemonRepository(pokeAPI: PokeAPI,
                                  pokemonInMemoryStorage: InMemoryStorage,
-                                 pokemonDataHelper: PokemonDataHelper): PokemonRepository =
-            PokemonRepositoryImpl(pokeAPI, pokemonInMemoryStorage, pokemonDataHelper)
+                                 pokemonImageGenerator: PokemonImageGenerator): PokemonRepository =
+            PokemonRepositoryImpl(pokeAPI, pokemonInMemoryStorage, pokemonImageGenerator)
 
 }

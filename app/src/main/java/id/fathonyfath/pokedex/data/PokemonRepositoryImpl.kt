@@ -6,7 +6,10 @@ import id.fathonyfath.pokedex.data.storage.InMemoryStorage
 import id.fathonyfath.pokedex.model.Detail
 import id.fathonyfath.pokedex.model.Pokemon
 import id.fathonyfath.pokedex.model.Profile
-import id.fathonyfath.pokedex.utils.PokemonDataHelper
+import id.fathonyfath.pokedex.utils.PokemonImageGenerator
+import id.fathonyfath.pokedex.utils.capitalizeFirstLetter
+import id.fathonyfath.pokedex.utils.getIdFromURI
+import id.fathonyfath.pokedex.utils.removeDash
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -19,7 +22,7 @@ import io.reactivex.schedulers.Schedulers
 class PokemonRepositoryImpl(
         private val pokeAPI: PokeAPI,
         private val pokemonStorage: InMemoryStorage,
-        private val pokemonDataHelper: PokemonDataHelper)
+        private val pokemonImageGenerator: PokemonImageGenerator)
     : PokemonRepository {
 
     private val pokemonDetailRequestQueue: MutableSet<Int> = mutableSetOf()
@@ -47,18 +50,16 @@ class PokemonRepositoryImpl(
             return pokeAPI.getPokemonDetail(pokemonId)
                     .map {
                         val abilities = it.abilities.map { it.abilityDetail.name }.map {
-                            pokemonDataHelper.capitalizeFirstLetter(pokemonDataHelper.removeDash(it))
+                            it.removeDash().capitalizeFirstLetter()
                         }
                         val types = it.types.map { it.typeDetail.name }.map {
-                            pokemonDataHelper.capitalizeFirstLetter(pokemonDataHelper.removeDash(it))
+                            it.removeDash().capitalizeFirstLetter()
                         }
 
                         val stats = mutableMapOf<String, Int>()
 
                         it.stats.forEach {
-                            stats[pokemonDataHelper.capitalizeFirstLetter(
-                                    pokemonDataHelper.removeDash(it.statDetail.name)
-                            )] = it.baseStat
+                            stats[it.statDetail.name.removeDash().capitalizeFirstLetter()] = it.baseStat
                         }
 
                         val detail = Detail(types, abilities,
@@ -66,13 +67,14 @@ class PokemonRepositoryImpl(
 
                         val pokemon = Pokemon(
                                 it.id,
-                                pokemonDataHelper.capitalizeFirstLetter(pokemonDataHelper.removeDash(it.name)),
-                                pokemonDataHelper.getImageUrl(it.id), detail)
+                                it.name.removeDash().capitalizeFirstLetter(),
+                                pokemonImageGenerator.getImageUrl(it.id), detail)
 
                         return@map Pair(pokemonId, pokemon)
                     }
                     .doOnSuccess { pokemonStorage.putPokemon(it.first, it.second) }
-                    .doOnDispose { pokemonDetailRequestQueue.remove(pokemonId) }
+                    .doOnSuccess { pokemonDetailRequestQueue.remove(pokemonId) }
+                    .doOnError { pokemonDetailRequestQueue.remove(pokemonId) }
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.io())
                     .toCompletable()
@@ -86,13 +88,15 @@ class PokemonRepositoryImpl(
                 .map {
                     val pokemonList = arrayListOf<Pokemon>()
                     for (pokemon in it.results) {
-                        val pokemonId = pokemonDataHelper.getIdFromURI(pokemon.url)
-                        pokemonId?.let {
-                            pokemonList.add(Pokemon(it,
-                                    pokemonDataHelper.capitalizeFirstLetter(
-                                            pokemonDataHelper.removeDash(pokemon.name)
-                                    ),
-                                    pokemonDataHelper.getImageUrl(it)))
+                        val pokemonId = pokemon.url.getIdFromURI()
+                        pokemonId.let {
+                            pokemonList.add(
+                                    Pokemon(
+                                            it,
+                                            pokemon.name.removeDash().capitalizeFirstLetter(),
+                                            pokemonImageGenerator.getImageUrl(it)
+                                    )
+                            )
                         }
                     }
                     return@map pokemonList.toList()

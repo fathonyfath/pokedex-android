@@ -79,6 +79,8 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, Injectable
             viewModel.triggerLoadMore(it)
         }
 
+        viewModel.triggerLoadMore(0)
+
         pokemonRecycler.adapter = pokemonAdapter
         val spacingInPixel = resources.getDimensionPixelSize(R.dimen.spacingBetweenItem)
         pokemonRecycler.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingInPixel, true, 0))

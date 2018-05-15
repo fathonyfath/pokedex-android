@@ -3,22 +3,14 @@ package id.fathonyfath.pokedex.utils
 /**
  * Created by fathonyfath on 06/02/18.
  */
-class PokemonDataHelper(private val baseImageUrl: String) {
-
-    fun getImageUrl(pokemonId: Int): String {
-        return baseImageUrl + pokemonId.toString() + ".png"
-    }
-
-    fun getIdFromURI(uri: String): Int? {
-        return Regex("\\/\\d+\\/\$").find(uri)?.value?.replace(Regex("\\/"), "")?.toInt()
-    }
-
-    fun removeDash(name: String): String {
-        return name.replace(Regex("\\-"), " ")
-    }
-
-    fun capitalizeFirstLetter(name: String): String {
-        return name[0].toUpperCase() + name.substring(1)
-    }
-
+class PokemonImageGenerator(private val baseImageUrl: String) {
+    fun getImageUrl(pokemonId: Int): String = "$baseImageUrl$pokemonId.png"
 }
+
+fun String.getIdFromURI(): Int {
+    return Regex("/\\d+/\$").find(this)?.value?.replace(Regex("/"), "")?.toInt() ?: -1
+}
+
+fun String.removeDash(): String = this.replace(Regex("-"), " ")
+
+fun String.capitalizeFirstLetter(): String = "${this[0].toUpperCase()}${this.substring(1)}"

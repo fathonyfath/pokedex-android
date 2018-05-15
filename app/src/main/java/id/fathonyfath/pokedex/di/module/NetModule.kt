@@ -4,8 +4,9 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
+import id.fathonyfath.pokedex.BuildConfig
 import id.fathonyfath.pokedex.data.api.PokeAPI
-import id.fathonyfath.pokedex.utils.PokemonDataHelper
+import id.fathonyfath.pokedex.utils.PokemonImageGenerator
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -20,8 +21,7 @@ import javax.inject.Singleton
 open class NetModule(private val baseUrl: String, private val baseImageUrl: String) {
 
     companion object {
-        val instance = NetModule("http://pokeapi.salestock.net/",
-                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/")
+        val instance = NetModule(BuildConfig.SERVER_URL, BuildConfig.IMAGE_URL)
     }
 
     @Provides
@@ -77,7 +77,7 @@ open class NetModule(private val baseUrl: String, private val baseImageUrl: Stri
 
     @Provides
     @Singleton
-    fun providePokemonImageUrlGenerator(): PokemonDataHelper {
-        return PokemonDataHelper(baseImageUrl)
+    fun providePokemonImageGenerator(): PokemonImageGenerator {
+        return PokemonImageGenerator(baseImageUrl)
     }
 }
