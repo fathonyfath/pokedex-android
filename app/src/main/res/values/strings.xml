@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Pokédex</string>
 
+    <string name="retry">Retry</string>
+
     <string name="pokemonTypes">Types</string>
     <string name="pokemonProfile">Profile</string>
     <string name="pokemonWeight">Weight</string>

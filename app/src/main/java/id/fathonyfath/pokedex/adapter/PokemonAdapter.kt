@@ -2,7 +2,6 @@ package id.fathonyfath.pokedex.adapter
 
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,33 +10,39 @@ import id.fathonyfath.pokedex.R
 import id.fathonyfath.pokedex.model.Pokemon
 import id.fathonyfath.pokedex.module.GlideApp
 import kotlinx.android.synthetic.main.item_pokemon.view.*
+import kotlinx.android.synthetic.main.item_retry.view.*
 
 /**
  * Created by fathonyfath on 17/11/17.
  */
 
 class PokemonAdapter(var pokemonList: List<Pokemon>,
-                     hasNextItem: Boolean,
                      private val itemClick: (Pokemon) -> Unit) :
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
         const val TYPE_ITEM = 0
         const val TYPE_LOADING = 1
+        const val TYPE_RETRY = 2
     }
 
-    var hasNextItem: Boolean = hasNextItem
+    enum class State {
+        NONE, LOADING, RETRY
+    }
+
+    var state: State = State.RETRY
         set(value) {
             if (field != value) {
                 field = value
-                updateLoadingRecycler()
+                updateRecyclerState()
             }
         }
 
     var onLoadMore: ((Int) -> Unit)? = null
+    var onRetryClick: (() -> Unit)? = null
 
-    private fun updateLoadingRecycler() {
-        if (hasNextItem) {
+    private fun updateRecyclerState() {
+        if (state == State.LOADING || state == State.RETRY) {
             notifyItemInserted(pokemonList.size)
         } else {
             notifyItemRemoved(pokemonList.size)
@@ -58,7 +63,9 @@ class PokemonAdapter(var pokemonList: List<Pokemon>,
     }
 
     override fun getItemViewType(position: Int): Int = when (position) {
-        pokemonList.size -> TYPE_LOADING
+        pokemonList.size -> {
+            if (state == State.LOADING) TYPE_LOADING else TYPE_RETRY
+        }
         else -> TYPE_ITEM
     }
 
@@ -66,11 +73,12 @@ class PokemonAdapter(var pokemonList: List<Pokemon>,
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is ItemViewHolder -> holder.bind(pokemonList[position])
+            is RetryViewHolder -> holder.bind()
             else -> onLoadMore?.invoke(pokemonList.size)
         }
     }
 
-    override fun getItemCount(): Int = if (this.hasNextItem) {
+    override fun getItemCount(): Int = if (state == State.LOADING || state == State.RETRY) {
         pokemonList.size + 1
     } else {
         pokemonList.size
@@ -82,21 +90,31 @@ class PokemonAdapter(var pokemonList: List<Pokemon>,
         return when (viewType) {
             TYPE_ITEM -> ItemViewHolder(inflater.inflate(R.layout.item_pokemon, parent, false), itemClick)
             TYPE_LOADING -> object : RecyclerView.ViewHolder(inflater.inflate(R.layout.item_loading, parent, false)) {}
+            TYPE_RETRY -> RetryViewHolder(inflater.inflate(R.layout.item_retry, parent, false), onRetryClick)
             else -> throw IllegalStateException("Invalid item view type.")
         }
     }
 
 
     class ItemViewHolder(view: View,
-                         private val itemCLick: (Pokemon) -> Unit) :
+                         private val itemClick: (Pokemon) -> Unit) :
             RecyclerView.ViewHolder(view) {
 
         fun bind(pokemon: Pokemon) {
             with(pokemon) {
                 itemView.pokemonName.text = pokemon.name
                 GlideApp.with(itemView).load(this.imageUrl).transition(withCrossFade()).into(itemView.pokemonImage)
-                itemView.pokemonCard.setOnClickListener { itemCLick(this) }
+                itemView.pokemonCard.setOnClickListener { itemClick.invoke(this) }
             }
+        }
+    }
+
+    class RetryViewHolder(view: View,
+                          private val retryClick: (() -> Unit)?) :
+            RecyclerView.ViewHolder(view) {
+
+        fun bind() {
+            itemView.retryButton.setOnClickListener { retryClick?.invoke() }
         }
     }
 }

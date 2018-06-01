@@ -42,13 +42,13 @@ class MainViewModel @Inject constructor(
 
     fun triggerLoadMore(offset: Int) {
         compositeDisposable.add(
-                pokemonRepository.fetchMorePokemon(offset).subscribe({ _hasMorePokemon.postValue(it) }, { })
+                pokemonRepository.fetchMorePokemon(offset).subscribe({ _hasMorePokemon.postValue(it) }, {  })
         )
     }
 
     fun fetchPokemonDetails(pokemonId: Int) {
         compositeDisposable.add(
-                pokemonRepository.fetchPokemonDetail(pokemonId).subscribe({ })
+                pokemonRepository.fetchPokemonDetail(pokemonId).subscribe({ }, { })
         )
     }
 

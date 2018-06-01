@@ -3,12 +3,9 @@ package id.fathonyfath.pokedex
 import android.arch.lifecycle.ViewModelProviders
 import android.content.res.Configuration
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
-import android.util.Log
 import android.widget.Toast
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
@@ -40,7 +37,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, Injectable
     var pokemonAdapter: PokemonAdapter? = null
 
     companion object {
-        val DIALOG_TAG = "Detail"
+        const val DIALOG_TAG = "Detail"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +54,11 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, Injectable
 
         viewModel.hasMorePokemon.observe(this) {
             it?.let {
-                pokemonAdapter?.hasNextItem = it
+                if (it) {
+                    pokemonAdapter?.state = PokemonAdapter.State.LOADING
+                } else {
+                    pokemonAdapter?.state = PokemonAdapter.State.NONE
+                }
             }
         }
     }
@@ -71,15 +72,21 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, Injectable
         val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 4 else 2
 
         pokemonRecycler.layoutManager = GridLayoutManager(this, spanCount)
-        pokemonAdapter = PokemonAdapter(listOf(), true) {
+        pokemonAdapter = PokemonAdapter(listOf()) {
             showDetailDialog(it.id)
+        }.apply {
+            onLoadMore = {
+                viewModel.triggerLoadMore(it)
+            }
+
+            onRetryClick = {
+                Toast.makeText(this@MainActivity, "Retry click", Toast.LENGTH_SHORT).show()
+            }
+
+            state = PokemonAdapter.State.LOADING
         }
 
-        pokemonAdapter?.onLoadMore = {
-            viewModel.triggerLoadMore(it)
-        }
-
-        viewModel.triggerLoadMore(0)
+        //viewModel.triggerLoadMore(0)
 
         pokemonRecycler.adapter = pokemonAdapter
         val spacingInPixel = resources.getDimensionPixelSize(R.dimen.spacingBetweenItem)
