@@ -43,6 +43,7 @@ class PokemonAdapter(var pokemonList: List<Pokemon>,
 
     private fun updateRecyclerState() {
         if (state == State.LOADING || state == State.RETRY) {
+            notifyItemRemoved(pokemonList.size)
             notifyItemInserted(pokemonList.size)
         } else {
             notifyItemRemoved(pokemonList.size)

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
-import android.widget.Toast
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
@@ -52,15 +51,38 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, Injectable
             }
         }
 
-        viewModel.hasMorePokemon.observe(this) {
+        viewModel.loadMoreResult.observe(this) {
             it?.let {
-                if (it) {
-                    pokemonAdapter?.state = PokemonAdapter.State.LOADING
-                } else {
-                    pokemonAdapter?.state = PokemonAdapter.State.NONE
+                when (it.first) {
+                    is MainViewModel.Result.Success -> {
+                        pokemonAdapter?.state = if (it.second) PokemonAdapter.State.LOADING else PokemonAdapter.State.NONE
+                    }
+                    is MainViewModel.Result.Error -> {
+                        pokemonAdapter?.state = PokemonAdapter.State.RETRY
+                    }
                 }
             }
         }
+
+//        viewModel.hasMorePokemon.observe(this) {
+//            it?.let {
+//                if (it) {
+//                    pokemonAdapter?.state = PokemonAdapter.State.LOADING
+//                } else {
+//                    pokemonAdapter?.state = PokemonAdapter.State.NONE
+//                }
+//            }
+//        }
+//
+//        viewModel.loadMoreResult.observe(this) {
+//            it?.let {
+//                when (it) {
+//                    is MainViewModel.Result.Error -> {
+//                        pokemonAdapter?.state = PokemonAdapter.State.RETRY
+//                    }
+//                }
+//            }
+//        }
     }
 
     private fun showDetailDialog(pokemonId: Int) {
@@ -80,13 +102,11 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, Injectable
             }
 
             onRetryClick = {
-                Toast.makeText(this@MainActivity, "Retry click", Toast.LENGTH_SHORT).show()
+                this.state = PokemonAdapter.State.LOADING
             }
 
             state = PokemonAdapter.State.LOADING
         }
-
-        //viewModel.triggerLoadMore(0)
 
         pokemonRecycler.adapter = pokemonAdapter
         val spacingInPixel = resources.getDimensionPixelSize(R.dimen.spacingBetweenItem)

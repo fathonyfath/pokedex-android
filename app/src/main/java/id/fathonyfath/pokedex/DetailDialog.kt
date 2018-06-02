@@ -2,10 +2,12 @@ package id.fathonyfath.pokedex
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import id.fathonyfath.pokedex.di.Injectable
 import id.fathonyfath.pokedex.di.ViewModelFactory
@@ -83,6 +85,20 @@ class DetailDialog : DialogFragment(), Injectable {
                 toolbar.title = "#${it.id} - ${it.name}"
                 GlideApp.with(this).load(it.imageUrl).transition(withCrossFade()).into(pokemonImage)
                 decideDetailOrLoading(it.detail)
+            }
+        }
+
+        viewModel.fetchDetailResult.observe(this) {
+            it?.let {
+                when (it) {
+                    is MainViewModel.Result.Error -> {
+                        Handler().postDelayed({
+                            Toast.makeText(context, "Check your connection.", Toast.LENGTH_SHORT).show()
+                            dialog.dismiss()
+                        }, 500)
+                        Unit
+                    }
+                }
             }
         }
     }

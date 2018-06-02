@@ -6,11 +6,7 @@ import id.fathonyfath.pokedex.data.storage.InMemoryStorage
 import id.fathonyfath.pokedex.model.Detail
 import id.fathonyfath.pokedex.model.Pokemon
 import id.fathonyfath.pokedex.model.Profile
-import id.fathonyfath.pokedex.utils.PokemonImageGenerator
-import id.fathonyfath.pokedex.utils.capitalizeFirstLetter
-import id.fathonyfath.pokedex.utils.getIdFromURI
-import id.fathonyfath.pokedex.utils.removeDash
-import io.reactivex.Completable
+import id.fathonyfath.pokedex.utils.*
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
@@ -43,7 +39,7 @@ class PokemonRepositoryImpl(
                 .observeOn(Schedulers.io())
     }
 
-    override fun fetchPokemonDetail(pokemonId: Int): Completable {
+    override fun fetchPokemonDetail(pokemonId: Int): Single<Either<Throwable, Boolean>> {
         if (pokemonStorage.getPokemon(pokemonId)?.detail == null &&
                 !pokemonDetailRequestQueue.contains(pokemonId)) {
             pokemonDetailRequestQueue.add(pokemonId)
@@ -75,15 +71,16 @@ class PokemonRepositoryImpl(
                     .doOnSuccess { pokemonStorage.putPokemon(it.first, it.second) }
                     .doOnSuccess { pokemonDetailRequestQueue.remove(pokemonId) }
                     .doOnError { pokemonDetailRequestQueue.remove(pokemonId) }
+                    .map<Either<Throwable, Boolean>> { Either.Right(true) }
+                    .onErrorReturn { Either.Left(it) }
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.io())
-                    .toCompletable()
         } else {
-            return Completable.complete()
+            return Single.just(Either.Right(true))
         }
     }
 
-    override fun fetchMorePokemon(offsetPokemonId: Int): Single<Boolean> {
+    override fun fetchMorePokemon(offsetPokemonId: Int): Single<Either<Throwable, Boolean>> {
         return pokeAPI.getPokemonList(offsetPokemonId)
                 .map {
                     val pokemonList = arrayListOf<Pokemon>()
@@ -103,6 +100,8 @@ class PokemonRepositoryImpl(
                 }
                 .doOnSuccess { it.forEach { item -> pokemonStorage.putPokemon(item.id, item) } }
                 .map { it.isNotEmpty() }
+                .map<Either<Throwable, Boolean>> { Either.Right(it) }
+                .onErrorReturn { Either.Left(it) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
     }

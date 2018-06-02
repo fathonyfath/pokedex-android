@@ -18,15 +18,20 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _pokemonList: MutableLiveData<List<Pokemon>> = MutableLiveData()
-    private val _hasMorePokemon: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = true }
+    private val _loadMoreResult: MutableLiveData<Pair<Result, Boolean>> = MutableLiveData()
+
+    private val _fetchDetailResult: MutableLiveData<Result> = MutableLiveData()
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     val pokemonList: LiveData<List<Pokemon>>
         get() = _pokemonList
 
-    val hasMorePokemon: LiveData<Boolean>
-        get() = _hasMorePokemon
+    val loadMoreResult: LiveData<Pair<Result, Boolean>>
+        get() = _loadMoreResult
+
+    val fetchDetailResult: LiveData<Result>
+        get() = _fetchDetailResult
 
     init {
         val disposable = pokemonRepository.listenToPokemonList()
@@ -41,19 +46,38 @@ class MainViewModel @Inject constructor(
     }
 
     fun triggerLoadMore(offset: Int) {
+        _loadMoreResult.value = null
         compositeDisposable.add(
-                pokemonRepository.fetchMorePokemon(offset).subscribe({ _hasMorePokemon.postValue(it) }, {  })
+                pokemonRepository.fetchMorePokemon(offset).subscribe({
+                    it.either({
+                        _loadMoreResult.postValue(Result.Error() to true)
+                    }, {
+                        _loadMoreResult.postValue(Result.Success() to it)
+                    })
+                }, { })
         )
     }
 
     fun fetchPokemonDetails(pokemonId: Int) {
+        _fetchDetailResult.value = null
         compositeDisposable.add(
-                pokemonRepository.fetchPokemonDetail(pokemonId).subscribe({ }, { })
+                pokemonRepository.fetchPokemonDetail(pokemonId).subscribe({
+                    it.either({
+                        _fetchDetailResult.postValue(Result.Error())
+                    }, {
+                        _fetchDetailResult.postValue(Result.Success())
+                    })
+                }, { })
         )
     }
 
     override fun onCleared() {
         super.onCleared()
         compositeDisposable.dispose()
+    }
+
+    sealed class Result {
+        class Error : Result()
+        class Success : Result()
     }
 }
