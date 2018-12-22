@@ -38,11 +38,11 @@ class DetailDialog : DialogFragment(), Injectable {
     lateinit var viewModelFactory: ViewModelFactory
 
     val viewModel: MainViewModel by lazy {
-        ViewModelProviders.of(activity, viewModelFactory).get(MainViewModel::class.java)
+        ViewModelProviders.of(requireActivity(), viewModelFactory).get(MainViewModel::class.java)
     }
 
     val pokemonId: Int by lazy {
-        arguments.getInt(POKEMON_ID_KEY, -1)
+        arguments?.getInt(POKEMON_ID_KEY, -1) ?: -1
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,11 +68,11 @@ class DetailDialog : DialogFragment(), Injectable {
 
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.dialog_detail, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.dialog_detail, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         toolbar.setNavigationOnClickListener {
