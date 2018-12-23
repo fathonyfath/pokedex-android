@@ -15,7 +15,7 @@ import io.reactivex.schedulers.Schedulers
  * Created by fathonyfath on 04/02/18.
  */
 
-class PokemonRepositoryImpl(
+class PokemonRepositoryImpl constructor(
         private val pokeAPI: PokeAPI,
         private val pokemonStorage: InMemoryStorage,
         private val pokemonImageGenerator: PokemonImageGenerator)

@@ -10,19 +10,9 @@ class ViewModelFactory @Inject constructor(
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        var creator = creators.get(modelClass)
-        if (creator == null) {
-            for ((key, value) in creators) {
-                if (modelClass.isAssignableFrom(key)) {
-                    creator = value
-                    break
-                }
-            }
-        }
-
-        if (creator == null) {
-            throw IllegalArgumentException("Unknown model data class " + modelClass)
-        }
+        val creator = creators[modelClass] ?: creators.entries.firstOrNull {
+            modelClass.isAssignableFrom(it.key)
+        }?.value ?: throw IllegalArgumentException("Unknown model data class $modelClass")
 
         try {
             @Suppress("UNCHECKED_CAST")

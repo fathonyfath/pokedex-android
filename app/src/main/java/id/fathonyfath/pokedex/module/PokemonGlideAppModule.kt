@@ -8,4 +8,4 @@ import com.bumptech.glide.module.AppGlideModule
  */
 
 @GlideModule
-class PokemonGlideAppModule : AppGlideModule() {}
+class PokemonGlideAppModule : AppGlideModule()

@@ -5,7 +5,7 @@ import android.app.Application
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
-import id.fathonyfath.pokedex.di.initDaggerComponent
+import id.fathonyfath.pokedex.di.AppInjector
 import javax.inject.Inject
 
 /**
@@ -20,7 +20,7 @@ class App : Application(), HasActivityInjector {
     override fun onCreate() {
         super.onCreate()
 
-        initDaggerComponent()
+        AppInjector.init(this)
     }
 
     override fun activityInjector(): AndroidInjector<Activity> = activityDispatchingAndroidInjector

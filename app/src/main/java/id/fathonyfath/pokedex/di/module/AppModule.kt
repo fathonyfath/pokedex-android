@@ -26,13 +26,9 @@ open class AppModule {
 
     @Provides
     @Singleton
-    fun providePokemonInMemoryStorage(): InMemoryStorage = InMemoryStorage()
-
-    @Provides
-    @Singleton
     fun providePokemonRepository(pokeAPI: PokeAPI,
-                                 pokemonInMemoryStorage: InMemoryStorage,
+                                 pokemonStorage: InMemoryStorage,
                                  pokemonImageGenerator: PokemonImageGenerator): PokemonRepository =
-            PokemonRepositoryImpl(pokeAPI, pokemonInMemoryStorage, pokemonImageGenerator)
+            PokemonRepositoryImpl(pokeAPI, pokemonStorage, pokemonImageGenerator)
 
 }

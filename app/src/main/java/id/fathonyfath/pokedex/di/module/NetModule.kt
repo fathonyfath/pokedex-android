@@ -26,7 +26,7 @@ open class NetModule(private val baseUrl: String, private val baseImageUrl: Stri
 
     @Provides
     @Singleton
-    fun provideLoggingInterecptor(): HttpLoggingInterceptor {
+    fun provideLoggingInterceptor(): HttpLoggingInterceptor {
         val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         return loggingInterceptor

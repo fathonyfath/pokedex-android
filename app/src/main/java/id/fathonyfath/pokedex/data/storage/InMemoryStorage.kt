@@ -4,8 +4,11 @@ import id.fathonyfath.pokedex.model.Pokemon
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.Subject
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class InMemoryStorage {
+@Singleton
+class InMemoryStorage @Inject constructor() {
 
     private val memoryStorage: MutableMap<Int, Pokemon> = mutableMapOf()
     private val subjectMemoryStorage: Subject<MutableMap<Int, Pokemon>> = BehaviorSubject.create()
