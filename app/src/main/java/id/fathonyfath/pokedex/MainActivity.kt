@@ -4,11 +4,8 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
+import dagger.hilt.android.AndroidEntryPoint
 import id.fathonyfath.pokedex.adapter.PokemonAdapter
-import id.fathonyfath.pokedex.di.Injectable
 import id.fathonyfath.pokedex.di.ViewModelFactory
 import id.fathonyfath.pokedex.model.Pokemon
 import id.fathonyfath.pokedex.utils.GridSpacingItemDecoration
@@ -16,13 +13,8 @@ import id.fathonyfath.pokedex.utils.observe
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), HasAndroidInjector, Injectable {
-
-
-    @Inject
-    lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Any>
-
-    override fun androidInjector(): AndroidInjector<Any> = fragmentDispatchingAndroidInjector
+@AndroidEntryPoint
+class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory

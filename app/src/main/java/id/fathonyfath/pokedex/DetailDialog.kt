@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
-import id.fathonyfath.pokedex.di.Injectable
+import dagger.hilt.android.AndroidEntryPoint
 import id.fathonyfath.pokedex.di.ViewModelFactory
 import id.fathonyfath.pokedex.model.Detail
 import id.fathonyfath.pokedex.module.GlideApp
@@ -20,7 +20,9 @@ import javax.inject.Inject
 /**
  * Created by fathonyfath on 17/03/18.
  */
-class DetailDialog : DialogFragment(), Injectable {
+
+@AndroidEntryPoint
+class DetailDialog : DialogFragment() {
 
     companion object {
         private val POKEMON_ID_KEY = "PokemonId"

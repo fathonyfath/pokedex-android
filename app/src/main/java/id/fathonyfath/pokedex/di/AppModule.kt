@@ -1,9 +1,11 @@
-package id.fathonyfath.pokedex.di.module
+package id.fathonyfath.pokedex.di
 
 import android.app.Application
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import id.fathonyfath.pokedex.data.PokemonRepositoryImpl
 import id.fathonyfath.pokedex.data.api.PokeAPI
 import id.fathonyfath.pokedex.data.repository.PokemonRepository
@@ -18,7 +20,8 @@ import javax.inject.Singleton
 @Module(includes = [
     ViewModelBuilder::class
 ])
-open class AppModule {
+@InstallIn(ApplicationComponent::class)
+object AppModule {
 
     @Provides
     @Singleton

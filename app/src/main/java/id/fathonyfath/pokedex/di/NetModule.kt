@@ -1,9 +1,11 @@
-package id.fathonyfath.pokedex.di.module
+package id.fathonyfath.pokedex.di
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import id.fathonyfath.pokedex.BuildConfig
 import id.fathonyfath.pokedex.data.api.PokeAPI
 import id.fathonyfath.pokedex.utils.PokemonImageGenerator
@@ -12,17 +14,25 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Named
 import javax.inject.Singleton
 
 /**
  * Created by fathonyfath on 06/02/18.
  */
 @Module
-open class NetModule(private val baseUrl: String, private val baseImageUrl: String) {
+@InstallIn(ApplicationComponent::class)
+object NetModule {
 
-    companion object {
-        val instance = NetModule(BuildConfig.SERVER_URL, BuildConfig.IMAGE_URL)
-    }
+    @Provides
+    @Singleton
+    @Named("SERVER_URL")
+    fun provideBaseUrl(): String = BuildConfig.SERVER_URL
+
+    @Provides
+    @Singleton
+    @Named("IMAGE_URL")
+    fun provideImageUrl(): String = BuildConfig.IMAGE_URL
 
     @Provides
     @Singleton
@@ -55,10 +65,10 @@ open class NetModule(private val baseUrl: String, private val baseImageUrl: Stri
     @Singleton
     fun provideGsonCoverterFactory(gson: Gson): GsonConverterFactory = GsonConverterFactory.create(gson)
 
-
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient,
+    fun provideRetrofit(@Named("SERVER_URL") baseUrl: String,
+                        okHttpClient: OkHttpClient,
                         gsonConverterFactory: GsonConverterFactory,
                         rx2CallAdapterFactory: RxJava2CallAdapterFactory): Retrofit {
         return Retrofit.Builder()
@@ -77,7 +87,7 @@ open class NetModule(private val baseUrl: String, private val baseImageUrl: Stri
 
     @Provides
     @Singleton
-    fun providePokemonImageGenerator(): PokemonImageGenerator {
+    fun providePokemonImageGenerator(@Named("IMAGE_URL") baseImageUrl: String): PokemonImageGenerator {
         return PokemonImageGenerator(baseImageUrl)
     }
 }
