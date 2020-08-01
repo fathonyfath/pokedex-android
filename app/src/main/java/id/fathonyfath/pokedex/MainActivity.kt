@@ -1,11 +1,9 @@
 package id.fathonyfath.pokedex
 
-import android.arch.lifecycle.ViewModelProviders
 import android.content.res.Configuration
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.GridLayoutManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
@@ -30,7 +28,7 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector, Injectable {
     lateinit var viewModelFactory: ViewModelFactory
 
     val viewModel: MainViewModel by lazy {
-        ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
+        ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
     }
 
     var pokemonAdapter: PokemonAdapter? = null
@@ -63,26 +61,6 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector, Injectable {
                 }
             }
         }
-
-//        viewModel.hasMorePokemon.observe(this) {
-//            it?.let {
-//                if (it) {
-//                    pokemonAdapter?.state = PokemonAdapter.State.LOADING
-//                } else {
-//                    pokemonAdapter?.state = PokemonAdapter.State.NONE
-//                }
-//            }
-//        }
-//
-//        viewModel.loadMoreResult.observe(this) {
-//            it?.let {
-//                when (it) {
-//                    is MainViewModel.Result.Error -> {
-//                        pokemonAdapter?.state = PokemonAdapter.State.RETRY
-//                    }
-//                }
-//            }
-//        }
     }
 
     private fun showDetailDialog(pokemonId: Int) {
@@ -93,7 +71,7 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector, Injectable {
     private fun initializeRecyclerView() {
         val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 4 else 2
 
-        pokemonRecycler.layoutManager = GridLayoutManager(this, spanCount)
+        pokemonRecycler.layoutManager = androidx.recyclerview.widget.GridLayoutManager(this, spanCount)
         pokemonAdapter = PokemonAdapter(listOf()) {
             showDetailDialog(it.id)
         }.apply {

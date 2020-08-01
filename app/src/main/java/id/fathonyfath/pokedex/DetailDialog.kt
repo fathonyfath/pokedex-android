@@ -1,13 +1,13 @@
 package id.fathonyfath.pokedex
 
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.DialogFragment
+import androidx.fragment.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import id.fathonyfath.pokedex.di.Injectable
 import id.fathonyfath.pokedex.di.ViewModelFactory
@@ -38,7 +38,7 @@ class DetailDialog : DialogFragment(), Injectable {
     lateinit var viewModelFactory: ViewModelFactory
 
     val viewModel: MainViewModel by lazy {
-        ViewModelProviders.of(requireActivity(), viewModelFactory).get(MainViewModel::class.java)
+        ViewModelProvider(requireActivity(), viewModelFactory).get(MainViewModel::class.java)
     }
 
     val pokemonId: Int by lazy {
@@ -48,7 +48,7 @@ class DetailDialog : DialogFragment(), Injectable {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.DetailDialogTheme)
+        setStyle(androidx.fragment.app.DialogFragment.STYLE_NORMAL, R.style.DetailDialogTheme)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -76,7 +76,7 @@ class DetailDialog : DialogFragment(), Injectable {
         super.onViewCreated(view, savedInstanceState)
 
         toolbar.setNavigationOnClickListener {
-            dialog.dismiss()
+            dialog?.dismiss()
         }
 
         viewModel.fetchPokemonDetails(pokemonId)
@@ -94,7 +94,7 @@ class DetailDialog : DialogFragment(), Injectable {
                     is MainViewModel.Result.Error -> {
                         Handler().postDelayed({
                             Toast.makeText(context, "Check your connection.", Toast.LENGTH_SHORT).show()
-                            dialog.dismiss()
+                            dialog?.dismiss()
                         }, 500)
                         Unit
                     }

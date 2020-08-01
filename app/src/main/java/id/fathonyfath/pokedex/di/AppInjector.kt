@@ -4,9 +4,9 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
-import android.support.v4.app.FragmentManager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import android.util.Log
 import dagger.android.AndroidInjection
 import dagger.android.support.AndroidSupportInjection
@@ -46,10 +46,10 @@ object AppInjector {
     private fun handleActivityInjection(activity: Activity) {
         AndroidInjection.inject(activity)
 
-        val fragmentActivity = activity as FragmentActivity
-        fragmentActivity.supportFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
+        val fragmentActivity = activity as androidx.fragment.app.FragmentActivity
+        fragmentActivity.supportFragmentManager.registerFragmentLifecycleCallbacks(object : androidx.fragment.app.FragmentManager.FragmentLifecycleCallbacks() {
 
-            override fun onFragmentAttached(fm: FragmentManager, f: Fragment, context: Context) {
+            override fun onFragmentAttached(fm: androidx.fragment.app.FragmentManager, f: androidx.fragment.app.Fragment, context: Context) {
                 super.onFragmentAttached(fm, f, context)
                 if(f is Injectable) handleFragmentInjection(f)
             }
@@ -57,7 +57,7 @@ object AppInjector {
         }, true)
     }
 
-    private fun handleFragmentInjection(fragment: Fragment) {
+    private fun handleFragmentInjection(fragment: androidx.fragment.app.Fragment) {
         AndroidSupportInjection.inject(fragment)
     }
 }

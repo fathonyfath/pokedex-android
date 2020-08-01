@@ -1,7 +1,7 @@
 package id.fathonyfath.pokedex
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule
-import android.arch.lifecycle.Observer
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.Observer
 import id.fathonyfath.pokedex.data.repository.PokemonRepository
 import id.fathonyfath.pokedex.model.Detail
 import id.fathonyfath.pokedex.model.Pokemon
