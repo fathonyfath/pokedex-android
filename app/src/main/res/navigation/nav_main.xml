@@ -8,7 +8,21 @@
 
     <fragment
         android:id="@+id/catalogFragment"
-        android:name="id.fathonyfath.pokedex.CatalogFragment"
-        tools:layout="@layout/fragment_catalog"
-        android:label="CatalogFragment" />
+        android:name="id.fathonyfath.pokedex.ui.catalog.CatalogFragment"
+        android:label="CatalogFragment"
+        tools:layout="@layout/fragment_catalog">
+        <action
+            android:id="@+id/action_catalogFragment_to_detailDialog"
+            app:destination="@id/detailDialog" />
+    </fragment>
+    <dialog
+        android:id="@+id/detailDialog"
+        android:name="id.fathonyfath.pokedex.ui.detail.DetailDialog"
+        android:label="DetailDialog"
+        tools:layout="@layout/dialog_detail">
+        <argument
+            android:name="pokemonId"
+            android:defaultValue="-1"
+            app:argType="integer" />
+    </dialog>
 </navigation>

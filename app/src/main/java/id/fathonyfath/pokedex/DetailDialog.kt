@@ -50,7 +50,7 @@ class DetailDialog : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setStyle(androidx.fragment.app.DialogFragment.STYLE_NORMAL, R.style.DetailDialogTheme)
+        setStyle(STYLE_NORMAL, R.style.DetailDialogTheme)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
