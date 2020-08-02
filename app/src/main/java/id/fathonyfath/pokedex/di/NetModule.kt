@@ -63,7 +63,7 @@ object NetModule {
 
     @Provides
     @Singleton
-    fun provideGsonCoverterFactory(gson: Gson): GsonConverterFactory = GsonConverterFactory.create(gson)
+    fun provideGsonConverterFactory(gson: Gson): GsonConverterFactory = GsonConverterFactory.create(gson)
 
     @Provides
     @Singleton
