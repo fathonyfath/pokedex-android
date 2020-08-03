@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import id.fathonyfath.pokedex.R
 import id.fathonyfath.pokedex.databinding.FragmentCatalogBinding
+import id.fathonyfath.pokedex.utils.navigateSafe
 import id.fathonyfath.pokedex.utils.viewBinding
 
 class CatalogFragment : Fragment(R.layout.fragment_catalog) {
@@ -16,7 +17,7 @@ class CatalogFragment : Fragment(R.layout.fragment_catalog) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.detailButton.setOnClickListener {
-            findNavController().navigate(R.id.action_catalogFragment_to_detailDialog)
+            findNavController().navigateSafe(R.id.showDetailAction)
         }
     }
 }

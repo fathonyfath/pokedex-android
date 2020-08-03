@@ -12,9 +12,10 @@
         android:label="CatalogFragment"
         tools:layout="@layout/fragment_catalog">
         <action
-            android:id="@+id/action_catalogFragment_to_detailDialog"
+            android:id="@+id/showDetailAction"
             app:destination="@id/detailDialog" />
     </fragment>
+
     <dialog
         android:id="@+id/detailDialog"
         android:name="id.fathonyfath.pokedex.ui.detail.DetailDialog"
